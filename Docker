@@ -1,0 +1,80 @@
+# Use an official Ubuntu base image
+FROM ubuntu:22.04
+
+# Set environment variables to avoid interactive prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    wget \
+    bzip2 \
+    ca-certificates \
+    curl \
+    tar \
+    build-essential \
+    zlib1g-dev \
+    libbz2-dev \
+    liblzma-dev \
+    libcurl4-openssl-dev \
+    libssl-dev \
+    unzip \
+    rsync \
+    locales && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install Miniconda
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/miniconda.sh && \
+    bash /tmp/miniconda.sh -b -p /opt/conda && \
+    rm /tmp/miniconda.sh
+
+# Add Conda to PATH
+ENV PATH="/opt/conda/bin:$PATH"
+
+# Set up Bioconda channels
+RUN conda config --add channels defaults && \
+    conda config --add channels bioconda && \
+    conda config --add channels conda-forge && \
+    conda config --set channel_priority strict
+
+# Install Bioconda packages (e.g., pbmm2, fastqc, samtools, deeptools, and nextflow)
+RUN conda install -y pbmm2 fastqc samtools deeptools nextflow
+
+# Download and install pb-CpG-tools
+RUN wget https://github.com/PacificBiosciences/pb-CpG-tools/releases/download/v3.0.0/pb-CpG-tools-v3.0.0-x86_64-unknown-linux-gnu.tar.gz -O /tmp/pb-CpG-tools.tar.gz && \
+    tar -xzf /tmp/pb-CpG-tools.tar.gz -C /opt && \
+    rm /tmp/pb-CpG-tools.tar.gz
+
+# Add pb-CpG-tools to PATH
+ENV PATH="/opt/pb-CpG-tools-v3.0.0-x86_64-unknown-linux-gnu/bin:$PATH"
+
+# Copy the local SMRT Link installer into the container
+COPY smrtlink-release_25.2.0.266456.zip /tmp/smrtlink.zip
+
+# Install SMRT Link tools
+# THis file needs to be in the same driectory as the Docker File, this is a temperary change, if THis line is still here it means I forgot to update it
+# This is the line of code to download the smrtlink tools:
+# wget https://downloads.pacbcloud.com/public/software/installers/smrtlink-release_25.2.0.266456.zip
+RUN unzip /tmp/smrtlink.zip -d /tmp && \
+    /tmp/smrtlink-release_25.2.0.266456_linux_x86-64_libc-2.17_anydistro.run --rootdir /opt/smrtlink --smrttools-only && \
+    rm -rf /tmp/smrtlink-release_25.2.0.266456_linux_x86-64_libc-2.17_anydistro.run /tmp/smrtlink.zip
+
+# Add SMRT Link tools to PATH
+ENV PATH="/opt/smrtlink/smrtcmds/bin:$PATH"
+
+# Verify installations
+RUN fastqc --version && \
+    pbmm2 --version && \
+    samtools --version && \
+    /opt/pb-CpG-tools-v3.0.0-x86_64-unknown-linux-gnu/bin/aligned_bam_to_cpg_scores --help && \
+    deeptools --version && \
+    nextflow -version && \
+    ipdSummary --help && \
+    ls /opt/smrtlink/smrtcmds/bin  # Verify SMRT Link tools installation
+
+# Set a working directory
+WORKDIR /workspace
+
+# Default command (optional)
+CMD ["/bin/bash"]
