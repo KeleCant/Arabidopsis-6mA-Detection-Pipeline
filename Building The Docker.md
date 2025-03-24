@@ -84,3 +84,9 @@ $ apptainer shell --bind $(pwd):/mnt apptainer-6ma-search.sif
 ```
 $ cd /mnt
 ```
+
+4. Open in Specific Directory
+```
+$ apptainer shell --bind /home/kelebk/groups/fslg_dnasc/nobackup/archive/r84100_20250311_214607:/mnt apptainer-6ma-search.sif
+$ cd /mnt
+```
