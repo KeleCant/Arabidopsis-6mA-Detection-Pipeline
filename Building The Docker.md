@@ -36,3 +36,42 @@ This guide provides step-by-step instructions to set up and run the Arabidopsis 
 1. To allow the container to access local files, use the `-v` flag to mount a local directory. For example:
    ```bash
    $ docker run -it -v /path/to/local/directory:/workspace/capstone arabidopsis-6ma-search
+
+# Importing Docker File to Supercomputer
+### Step 1: Build a Docker Image (if not already built)
+```bash
+$ docker build -t arabidopsis-6ma-search .
+
+### Step 2: Save the Docker Image as a transferable zip file
+``` bash
+$ docker save -o arabidopsis-6ma-search.tar arabidopsis-6ma-search
+
+### Step 3: Transfer to a Supercomputer
+Using SCP:
+```bash
+$ scp arabidopsis-6ma-search.tar kelebk@ssh.rc.byu.edu:/home/kelebk/groups/fslg_dnasc/nobackup/archive/Capstone_project/
+
+Alternatively, set up Globus and transfer the file through Globus.
+
+### Step 4: Load the Apptainer Module
+```bash
+$ module load apptainer
+
+### Step 5: Convert Docker to Apptainer
+```bash
+$ apptainer build apptainer-6ma-search.sif docker-archive://arabidopsis-6ma-search.tar
+
+### Step 6: Clean Up
+```bash
+$ rm arabidopsis-6ma-search.tar  # Remove tar file to clear storage
+
+### Step 7: Bind Directory and Access Files
+1. Navigate to your directory
+```bash
+$ cd /home/groups/fslg_dnasc/nobackup/archive/Capstone_project/
+2. Start the container and bind the current directory to /mnt
+```bash
+   apptainer shell --bind $(pwd):/mnt apptainer-6ma-search.sif
+3. Inside the container, navigate to the bound directory
+```bash
+cd /mnt
