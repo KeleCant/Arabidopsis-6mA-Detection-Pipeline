@@ -107,10 +107,10 @@ $ cd /mnt
    $ module load apptainer
    ```
 4. Start the container and bind the current directory to /mnt
-```
-$ apptainer shell --bind $(pwd):/mnt apptainer-6ma-search.sif
-```
+   ```
+   $ apptainer shell --bind $(pwd):/mnt apptainer-6ma-search.sif
+   ```
 5. Inside the container, navigate to the bound directory
-```
-$ cd /mnt
-```
+   ```
+   $ cd /mnt
+   ```
