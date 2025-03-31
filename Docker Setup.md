@@ -79,7 +79,7 @@ $ rm arabidopsis-6ma-search.tar  # Remove tar file to clear storage
 ### Step 7: Bind Directory and Access Files
 1. Navigate to your directory
 ```
-$ cd /home/groups/fslg_dnasc/nobackup/archive/Capstone_project/
+$ cd groups/fslg_dnasc/nobackup/archive/Capstone_project/
 ```
 2. Start the container and bind the current directory to /mnt
 ```
@@ -93,5 +93,24 @@ $ cd /mnt
 4. Open in Specific Directory
 ```
 $ apptainer shell --bind /home/kelebk/groups/fslg_dnasc/nobackup/archive/r84100_20250311_214607:/mnt apptainer-6ma-search.sif
+$ cd /mnt
+```
+
+### Use Appitainer (after setup)
+1. Log into the Supper computer
+2. Navigate to wanted Directory
+   ```
+   $ cd groups/fslg_dnasc/nobackup/archive/Capstone_project/
+   ```
+3. load Appitainer
+   ```
+   $ module load apptainer
+   ```
+4. Start the container and bind the current directory to /mnt
+```
+$ apptainer shell --bind $(pwd):/mnt apptainer-6ma-search.sif
+```
+5. Inside the container, navigate to the bound directory
+```
 $ cd /mnt
 ```
