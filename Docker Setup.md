@@ -1,6 +1,6 @@
 # Arabidopsis 6mA Search - Docker Setup Guide
 
-This guide provides step-by-step instructions to set up and run the Arabidopsis 6mA Search tool using Docker.
+This guide provides step-by-step instructions on how to set up and run the Arabidopsis 6mA Search tool using Docker.
 
 ## Prerequisites
 
@@ -34,8 +34,13 @@ This guide provides step-by-step instructions to set up and run the Arabidopsis 
 
 ### Step 6: Mount Local Files (Optional)
 1. To allow the container to access local files, use the `-v` flag to mount a local directory. For example:
-   ```bash
+   ```
    $ docker run -it -v /path/to/local/directory:/workspace/capstone arabidopsis-6ma-search
+   ```
+   Ex.
+   ```
+   $ docker run -it -v C:/Users/kelec/Desktop/Capstone:/workspace/capstone arabidopsis-6ma-search
+   ```
 
 # Importing Docker File to Supercomputer
 ### Step 1: Build a Docker Image (if not already built)
