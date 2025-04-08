@@ -174,7 +174,7 @@ Example
   ```
 
 
-### Step 6: Plot Heatmap
+### Step 6: Plot [Heatmap](https://github.com/KeleCant/Arabidopsis-6mA-Detection-Pipeline/blob/main/Figure%203.pdf)
 plotHeatmap is a command from deeptools, available through Bioconda, that generates a heatmap image from the .MAT matrix file created in the previous step. The command allows you to customize the color scheme for the heatmap and output the result in different formats, such as PNG, SVG, or PDF.
 
   ```
