@@ -16,8 +16,9 @@ These are the files we would provide you with
   ```
   - 1000.bam (~12.3 GB)                 # Binary alignment file
   - 1000.bam.bai (~774 KB)              # BAM index file
-  - arabidopsis.fasta (~115 MB)         # Reference genome
-  - arabidopsis.fasta.fai (~195 bytes)  # FASTA index file
+  - arabidopsis.fasta (~115 MB)         # Reference genome in FASTA format
+  - arabidopsis.fasta.fai (~195 bytes)  # Index file for the reference genome
+  - RNA.fastq                           # Raw RNA sequencing data
   ```
 
 Required tools:
