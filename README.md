@@ -48,7 +48,7 @@ Note: While it's not essential to verify the presence of CpG methylation, you ca
   $ samtools view 1000.bam | grep -c "C+m"
   ```
 
-### Step 2: Align 
+### Step 2: Align Reads with pbmm2
 Use pbmm2 to align your unprocessed .bam file to the reference genome. This generates a sorted and indexed .bam file for downstream analysis.
 
   ```
@@ -62,31 +62,38 @@ Output: 1000_mapped.bam, 1000_mapped.bam.bai
 
 (The index file [.bam.bai] is detected and inserted automatically)
 
-### Step 3: Get CpG output
-Pb-cpg-tools is a tool created by PacBio to create CpG (5mC) methylation probabilities using the .bam files created from pbmm2. Using the aligned_bam_to_cpg_scores command and a path the aligned .bam file (the .bai file must also be in the same directory) it will create multiple output files. The files we will use for further analysis and visualization are the .bw (bigwig) file and .bed file. 
+### Step 3A: Generate CpG Methylation Scores
+pb-CpG-tools is a tool developed by PacBio to compute CpG (5mC) methylation probabilities from aligned HiFi .bam files. It requires that both the .bam and its corresponding .bai index file are present in the same directory.
+
+Using the aligned_bam_to_cpg_scores command, the tool generates several output files. The key files used for downstream analysis and visualization are the .bed and .bw (BigWig) files.
 
   ```
-  $ aligned_bam_to_cpg_scores --bam [aligned_bam_name]  --output-prefix [output_prefix]
+  $ aligned_bam_to_cpg_scores --bam [aligned.bam]  --output-prefix [output_prefix]
   ```
-  Example:
+Example:
   ```
   $ aligned_bam_to_cpg_scores --bam 1000_mapped.bam --output-prefix _CSS_Data
   ```
-Output: combined.bed.gz combined.bed.gz.tbi .log
+Output: 
+  ```
+  1000_mapped.combined.bed.gz      – A compressed BED file containing per-site CpG methylation probabilities across the genome
+  1000_mapped.combined.bed.gz.tbi  – An index file for the BED, enabling fast lookup in genome browsers and tools
+  1000_mapped.combined.bw          - A BigWig file for efficient visualization of methylation scores across the genome (e.g., in IGV or UCSC Genome Browser)
+  1000_mapped.log                  - A log file capturing runtime information and any processing messages or errors
+  ```
 
-### Step 4: Convert the bed file to a usable format
-convert.py is a simple python script written by our team to modify the .bed file from the previous into the format needed for further analysis. The new format of the file is a simplified .bed file containing only the necessary information.
+### Step 4A: Convert the bed file to a usable format
+convert.py is a simple Python script written by our team to modify the .bed file from the previous into the format needed for further analysis. The new format of the file is a simplified .bed file containing only the necessary information.
 
-First unzip the bed file from the previous step.
+First, unzip the bed file from the previous step.
 
   ```
   $ gunzip -c [bed.gz file] > [new .bed file]
   ```
-  Example:
+Example:
   ```
-  $ gunzip -c combined.bed.gz > combined.bed
+  $ gunzip -c 1000_mapped.combined.bed.gz > 1000_mapped.combined.bed
   ```
-
 
 Convert:
   ```
@@ -102,10 +109,18 @@ Output: new_bed.bed
 ### Step 5: Generate a Matrix
 computeMatrix is a command included in deeptools, a command line tool available through bioconda. This is an intermediate step to compute a matrix that is used to generate a heatmap. The command requires the .bw (bigwig) file created by pb-cpg-tools and the new .bed file that was created by using convert.py. The additional arguments ensure that the genomic regions of interest are centered on the heatmap and the amount of basepairs on each side of the center point. The command will use the files and arguments to create a .MAT (matrix) file that will be used in the next step.
 
+  ```
+  $ computeMatrix reference-point --referencePoint center -bs binSize -a BP_after_BED -b BP_before_BED -p 4 -S  BIGWIGSofINTEREST --regionsFileName BEDFILEOFINTEREST --outFileName OUTFILE [filename.MAT]
+  ```
+
 
 ### Step 6: Plot Heatmap
 plotHeatmap:
 plotHeatmap is a command included in deeptools, a command line tool available through bioconda. This command uses the .MAT file from the previous step and creates a heatmap image file (png, svg, or pdf) based on the colors specified in the command.
+
+```
+$ plotHeatmap -m MATRIXFILE -o HEATMAP --colorList lowColour,highColour
+```
 
 
 ### Step 7: View Data with Integrative Genomics Viewer (IGV)
