@@ -20,11 +20,6 @@ These are the files we would provide you with
   - arabidopsis.fasta.fai (~195 bytes)  # FASTA index file
   ```
 
-Expected Output Files:
-  ```
-
-  ```
-
 Required tools:
 | Tool | Purpose |
 |-----------------|----------------------------|
