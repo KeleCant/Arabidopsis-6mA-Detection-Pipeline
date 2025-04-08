@@ -79,8 +79,17 @@ Pb-cpg-tools is a tool created by PacBio to create CpG (5mC) methylation probabi
   ```
 Output: combined.bed.gz combined.bed.gz.tbi .log
 
-### Step 4: Get 6mA output
+### Step 4: Convert the bed file to a usable format
 convert.py is a simple python script written by our team to modify the .bed file from the previous into the format needed for further analysis. The new format of the file is a simplified .bed file containing only the necessary information.
+
+  ```
+  $ python convert.py [input bed file] [output bed file]
+  ```
+  Example:
+  ```
+  $ python convert.py combined.bed new_bed.bed
+  ```
+Output: new_bed.bed
 
 
 ### Step 5: Generate a Matrix
@@ -93,5 +102,10 @@ plotHeatmap is a command included in deeptools, a command line tool available th
 
 
 ### Step 6: View Data with Integrative Genomics Viewer (IGV)
-
+1. Open Integrative Genomics Viewer (IGV) on your local computer. Select A. thaliana (TAIR 10) as the reference genome. This will open the RefSeq Genes as a track.
+2. Locate the output aligned .bam and .bam.bai DNA files from pbmm2, the aligned RNA .bam and .bam.bai files, and the bigwig (.bw) file from the cpg-tool output. Ensure all of them are in the same directory.
+3. In IGV open each .bam file to create 4 more tracks. This will produce a “Coverage” track and a reads track for both the DNA and RNA.
+4. In IGV open the bigwig file as a track as well. At this point you will have a total of 6 tracks.
+5. In the top section of IGV there is a place to type in the region of interest and zoom in. Enter the region you would like to examine (the one in the figure is on chromosome 5 from nucleotide 8,647,136 to nucleotide 8,651,646).
+6. On the left hand side of the window there will be labels for each track. Right click on the DNA_file_name.bam track and remove that track. Do the same thing for the RNA_file_name.bam track. This will leave you with the bigwig track, DNA coverage track, RNA coverage track, and RefSeq Genes track (ie the figure). 
 
