@@ -45,6 +45,5 @@ if __name__ == "__main__":
     else:
         input_file = sys.argv[1]
         output_file = sys.argv[2]
-        #bed_file = "/Users/ctolb/Desktop/Epigenetics/new_name_10GB.combined.bed"  # Replace with your .bed file path
         bed_entries = read_bed(input_file)
         write_bed(output_file, bed_entries)
