@@ -77,6 +77,17 @@ Output: combined.bed.gz combined.bed.gz.tbi .log
 ### Step 4: Convert the bed file to a usable format
 convert.py is a simple python script written by our team to modify the .bed file from the previous into the format needed for further analysis. The new format of the file is a simplified .bed file containing only the necessary information.
 
+First unzip the bed file from the previous step.
+
+  ```
+  $ gunzip -c [bed.gz file] > [new .bed file]
+  ```
+  Example:
+  ```
+  $ gunzip -c combined.bed.gz > combined.bed
+  ```
+
+Convert:
   ```
   $ python convert.py [input bed file] [output bed file]
   ```
