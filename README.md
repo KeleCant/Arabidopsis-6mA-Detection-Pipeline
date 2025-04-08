@@ -1,15 +1,15 @@
 # Arabidopsis 6mA/CpG Detection and Comparison Pipeline – Reproducibility Guide
 
 ### A note to the grader
-This repository contains a reproducibility pipeline for our capstone project on 6mA and CpG methylation detection in Arabidopsis thaliana.
-
-We understand that you are aware of the specific data-sharing constraints surrounding this project. Due to privacy and permission restrictions set by our sponsor and steward, we are not authorized to distribute the raw data files externally, including for grading purposes. This policy has been approved by Dr. Payne.
+This is our reproducibility pipeline for our capstone project to detect and compare 6mA and CpG methylation in Arabidopsis thaliana. Due to privacy and permission restrictions set by our sponsor and steward, we are not authorized to distribute the raw data files externally, including for grading purposes. This policy has been approved by Dr. Payne.
 
 To support transparency and demonstrate our work, we have included:
 - A detailed workflow guide
 - An overview of expected inputs and processing steps
   
 We are still working on making 6mA data presentable. In its current state, our pipeline gives an output for 6mA concentration but it is not accurate. Please be patient as we continue to work on this problem. Dr. Payne is aware of this hiccup.
+
+# Reproducibility Guide
 
 Expected Inputs Files:
 These are the files we would provide you with
@@ -67,6 +67,7 @@ Output: 1000_mapped.bam, 1000_mapped.bam.bai
 
 (The index file [.bam.bai] is detected and inserted automatically)
 
+## Steps 3 and 4 have two scripts that run parallel to each other in nextflow. A is for CpG and B is for 6mA. Both generate the same outputs.
 
 ### Step 3A: Generate CpG Methylation Scores
 pb-CpG-tools is a tool developed by PacBio to compute CpG (5mC) methylation probabilities from aligned HiFi .bam files. It requires that both the .bam and its corresponding .bai index file are present in the same directory.
@@ -101,6 +102,8 @@ Example:
   ```
   $ gunzip -c 1000_mapped.combined.bed.gz > 1000_mapped.combined.bed
   ```
+
+
 **Convert the file format:**
 Run the convert.py script to transform the .bed file into the new format.
   ```
@@ -114,7 +117,8 @@ Output: 1000_mapped_updated.bed
 
 
 ### Step 3B: Create a 6mA BED File
-To create a 6mA BED file, we first use modbam2bed to extract methylation data from the aligned .bam file. As mentioned in the chart at the top of the page, this is where problems occur in our pipeline relating to 6mA. This step will be changed in the future.
+To create a 6mA BED file, we first use modbam2bed to extract methylation data from the aligned .bam file. As mentioned in the chart at the top of the page, this is where the problem occurs in our pipeline relating to 6mA. This step will be changed in the future. modbam2bed fails to produce accurate scores within the bed file, so we are currently looking into a solution. Most likely we will use Modkit, if that doesn't work we will write a script by hand.
+**Create a .bed file**
   ```
   $ modbam2bed -m 6mA [reference_genome.fasta] [input.bam] > [output.bed]
   ```
@@ -122,7 +126,10 @@ Example:
   ```
   $ modbam2bed -m 6mA arabidopsis.fasta 1000_mapped.bam > 1000_mapped_6mA.bed
   ```
-Next, use awk to filter and format the data into a .bedGraph file, which is required for BigWig creation.
+
+
+**Convert the BED to BEDGraph**
+Use awk to filter and format the data into a .bedGraph file. This is required to create a BigWig file.
   ```
   $ awk '{ print $1"\t"$2"\t"$3"\t"$5 }' [input.bed] > [output.bedgraph]
   ```
@@ -133,6 +140,7 @@ Example
 
 
 ### Step 4B: Convert 6mA BED File to .bw File
+**Extract Chromosome Data**
 To create a .bw (BigWig) file, first extract chromosome sizes from the reference genome's .fai index file.
   ```
   $ cut -f1,2 [reference_genome.fasta.fai] > chrom.sizes
@@ -141,6 +149,9 @@ Example:
   ```
   $ cut -f1,2 arabidopsis.fasta.fai > chrom.sizes
   ```
+
+
+**Create BigWig File**
 Next, use bedGraphToBigWig to convert the .bedGraph file into a .bw file for efficient visualization.
   ```
   $ bedGraphToBigWig [input.bedGraph] [chrom.sizes] [output.bw]
