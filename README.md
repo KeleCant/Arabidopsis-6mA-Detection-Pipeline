@@ -87,6 +87,7 @@ First unzip the bed file from the previous step.
   $ gunzip -c combined.bed.gz > combined.bed
   ```
 
+
 Convert:
   ```
   $ python convert.py [input bed file] [output bed file]
