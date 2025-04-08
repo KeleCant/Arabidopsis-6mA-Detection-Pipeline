@@ -105,6 +105,26 @@ Convert:
   ```
 Output: new_bed.bed
 
+### Step 3B: Create 6mA bed file
+
+```
+$ modbam2bed -m 6mA updated_GCF_000001735.4_TAIR10.1_genomic.fasta 1007_mapped.bam > 1007_mapped.bed
+```
+
+```
+$ awk '{ print $1"\t"$2"\t"$3"\t"$5 }' 1007_mapped.bed > 1007_mapped.bedgraph
+```
+
+### Step 4B: Convert 6mA bed file to .bw file
+
+```
+$ cut -f1,2 updated_GCF_000001735.4_TAIR10.1_genomic.fasta.fai > chrom.sizes
+```
+
+```
+$ bedGraphToBigWig 1007_mapped.bedGraph chrom.sizes 1007_mapped.bw
+```
+
 
 ### Step 5: Generate a Matrix
 computeMatrix is a command included in deeptools, a command line tool available through bioconda. This is an intermediate step to compute a matrix that is used to generate a heatmap. The command requires the .bw (bigwig) file created by pb-cpg-tools and the new .bed file that was created by using convert.py. The additional arguments ensure that the genomic regions of interest are centered on the heatmap and the amount of basepairs on each side of the center point. The command will use the files and arguments to create a .MAT (matrix) file that will be used in the next step.
