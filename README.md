@@ -51,6 +51,7 @@ Note: While it's not essential to verify the presence of CpG methylation, you ca
   $ samtools view 1000.bam | grep -c "C+m"
   ```
 
+
 ### Step 2: Align Reads with pbmm2
 Use pbmm2, a PacBio-optimized aligner, to map both your unprocessed .bam file and RNA sequencing data to the reference genome. This generates a sorted and indexed .bam file for downstream analysis.
 
@@ -65,6 +66,7 @@ Example:
 Output: 1000_mapped.bam, 1000_mapped.bam.bai
 
 (The index file [.bam.bai] is detected and inserted automatically)
+
 
 ### Step 3A: Generate CpG Methylation Scores
 pb-CpG-tools is a tool developed by PacBio to compute CpG (5mC) methylation probabilities from aligned HiFi .bam files. It requires that both the .bam and its corresponding .bai index file are present in the same directory.
@@ -86,48 +88,67 @@ Output:
   1000_mapped.log                  - A log file capturing runtime information and any processing messages or errors
   ```
 
-### Step 4A: Convert the bed file to a usable format
-convert.py is a simple Python script written by our team to modify the .bed file from the previous into the format needed for further analysis. The new format of the file is a simplified .bed file containing only the necessary information.
 
-First, unzip the bed file from the previous step.
+### Step 4A: Convert the BED File to a Usable Format
+convert.py is a custom Python script developed by our team to reformat the .bed file from the previous step into a simplified format suitable for further analysis. This new .bed file contains only the necessary data for further processing.
 
+**Unzip the BED file:**
+Before conversion, you’ll need to unzip the .bed.gz file from step 3A.
   ```
-  $ gunzip -c [bed.gz file] > [new .bed file]
+  $ gunzip -c [input.bed.gz file] > [output.bed file]
   ```
 Example:
   ```
   $ gunzip -c 1000_mapped.combined.bed.gz > 1000_mapped.combined.bed
   ```
-
-Convert:
+**Convert the file format:**
+Run the convert.py script to transform the .bed file into the new format.
   ```
   $ python convert.py [input bed file] [output bed file]
   ```
   Example:
   ```
-  $ python convert.py combined.bed new_bed.bed
+  $ python convert.py 1000_mapped.combined.bed 1000_mapped_updated.bed
   ```
-Output: new_bed.bed
+Output: 1000_mapped_updated.bed
 
-### Step 3B: Create 6mA bed file
 
-```
-$ modbam2bed -m 6mA updated_GCF_000001735.4_TAIR10.1_genomic.fasta 1007_mapped.bam > 1007_mapped.bed
-```
+### Step 3B: Create a 6mA BED File
+To create a 6mA BED file, we first use modbam2bed to extract methylation data from the aligned .bam file. As mentioned in the chart at the top of the page, this is where problems occur in our pipeline relating to 6mA. This step will be changed in the future.
+  ```
+  $ modbam2bed -m 6mA [reference_genome.fasta] [input.bam] > [output.bed]
+  ```
+Example:
+  ```
+  $ modbam2bed -m 6mA arabidopsis.fasta 1000_mapped.bam > 1000_mapped_6mA.bed
+  ```
+Next, use awk to filter and format the data into a .bedGraph file, which is required for BigWig creation.
+  ```
+  $ awk '{ print $1"\t"$2"\t"$3"\t"$5 }' [input.bed] > [output.bedgraph]
+  ```
+Example
+  ```
+  $ awk '{ print $1"\t"$2"\t"$3"\t"$5 }' 1000_mapped_6mA.bed > 1000_mapped_6mA.bedgraph
+  ```
 
-```
-$ awk '{ print $1"\t"$2"\t"$3"\t"$5 }' 1007_mapped.bed > 1007_mapped.bedgraph
-```
 
-### Step 4B: Convert 6mA bed file to .bw file
-
-```
-$ cut -f1,2 updated_GCF_000001735.4_TAIR10.1_genomic.fasta.fai > chrom.sizes
-```
-
-```
-$ bedGraphToBigWig 1007_mapped.bedGraph chrom.sizes 1007_mapped.bw
-```
+### Step 4B: Convert 6mA BED File to .bw File
+To create a .bw (BigWig) file, first extract chromosome sizes from the reference genome's .fai index file.
+  ```
+  $ cut -f1,2 [reference_genome.fasta.fai] > chrom.sizes
+  ```
+Example:
+  ```
+  $ cut -f1,2 arabidopsis.fasta.fai > chrom.sizes
+  ```
+Next, use bedGraphToBigWig to convert the .bedGraph file into a .bw file for efficient visualization.
+  ```
+  $ bedGraphToBigWig [input.bedGraph] [chrom.sizes] [output.bw]
+  ```
+Example:
+  ```
+  $ bedGraphToBigWig 1000_mapped_6mA.bedGraph chrom.sizes 1000_mapped_6mA.bw
+  ```
 
 
 ### Step 5: Generate a Matrix
