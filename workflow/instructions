@@ -1,0 +1,15 @@
+Activate conda
+Run: source ~/.bashrc
+Create a nextflow conda environment in home directory
+conda activate nextflow-env
+Update nextflow.contig file as needed
+Required:
+Update BAMFILEOFINTEREST with the path of the input bam file of your choice
+Update GENOMEFILEOFINTEREST with the path of your reference genome to which you want to align the bam file
+Optional:
+Update binSize, BP_after_BED, BP_before_BED as needed 
+Update lowColour and highColour to adhere to desired color scheme
+Run nextflow
+Run: nextflow run pipeline.nf
+If conda is having errors, run like this:
+nextflow run pipeline.nf -with-conda
