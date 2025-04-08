@@ -77,6 +77,7 @@ Pb-cpg-tools is a tool created by PacBio to create CpG (5mC) methylation probabi
   ```
   $ aligned_bam_to_cpg_scores --bam 1000_mapped.bam --output-prefix _CSS_Data
   ```
+Output: combined.bed.gz combined.bed.gz.tbi .log
 
 ### Step 4: Get 6mA output
 convert.py is a simple python script written by our team to modify the .bed file from the previous into the format needed for further analysis. The new format of the file is a simplified .bed file containing only the necessary information.
