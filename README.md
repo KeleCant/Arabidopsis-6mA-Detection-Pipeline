@@ -29,8 +29,9 @@ Required tools:
 | Tool | Purpose |
 |-----------------|----------------------------|
 | samtools | samtools is a suite of utilities for processing and analyzing .bam and .sam files. It is used to inspect aligned reads and verify the presence of methylation tags such as 6mA (A+a) or CpG (C+m) before running the full pipeline. |
-| pbmm2 | pbmm2 is a PacBio-optimized alignment tool designed for mapping HiFi (CCS) reads to a reference genome. It is used to align unprocessed .bam files to the Arabidopsis thaliana reference, producing sorted and indexed BAM files. |
-| Pb-cpg-tools |  |
+| [pbmm2](https://github.com/PacificBiosciences/pbmm2) | pbmm2 is a PacBio-optimized alignment tool designed for mapping HiFi (CCS) reads to a reference genome. It is used to align unprocessed .bam files to the Arabidopsis thaliana reference, producing sorted and indexed BAM files. |
+| [Pb-cpg-tools](https://github.com/PacificBiosciences/pb-CpG-tools) | pb-CpG-tools is a PacBio utility for analyzing CpG methylation patterns from aligned HiFi sequencing data. It is used to extract and quantify CpG methylation sites from .bam files, enabling downstream comparison of epigenetic modifications. |
+|  |  |
 
 
 ### Step 1: Verify Presence of 6mA
@@ -68,6 +69,14 @@ Output: 1000_mapped.bam, 1000_mapped.bam.bai
 
 ### Step 3: Get CpG output
 Pb-cpg-tools is a tool created by PacBio to create CpG (5mC) methylation probabilities using the .bam files created from pbmm2. Using the aligned_bam_to_cpg_scores command and a path the aligned .bam file (the .bai file must also be in the same directory) it will create multiple output files. The files we will use for further analysis and visualization are the .bw (bigwig) file and .bed file. 
+
+  ```
+  $ aligned_bam_to_cpg_scores --bam [aligned_bam_name]  --output-prefix [output_prefix]
+  ```
+  Example:
+  ```
+  $ aligned_bam_to_cpg_scores --bam 1000_mapped.bam --output-prefix _CSS_Data
+  ```
 
 ### Step 4: Get 6mA output
 convert.py is a simple python script written by our team to modify the .bed file from the previous into the format needed for further analysis. The new format of the file is a simplified .bed file containing only the necessary information.
