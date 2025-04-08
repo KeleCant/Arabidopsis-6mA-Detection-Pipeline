@@ -112,15 +112,23 @@ computeMatrix is a command included in deeptools, a command line tool available 
   ```
   $ computeMatrix reference-point --referencePoint center -bs binSize -a BP_after_BED -b BP_before_BED -p 4 -S  BIGWIGSofINTEREST --regionsFileName BEDFILEOFINTEREST --outFileName OUTFILE [filename.MAT]
   ```
+Example 
+  ```
+  $ computeMatrix reference-point --referencePoint center -bs binSize -a BP_after_BED -b BP_before_BED -p 4 -S  BIGWIGSofINTEREST --regionsFileName BEDFILEOFINTEREST --outFileName OUTFILE [filename.MAT]
+  ```
 
 
 ### Step 6: Plot Heatmap
 plotHeatmap:
 plotHeatmap is a command included in deeptools, a command line tool available through bioconda. This command uses the .MAT file from the previous step and creates a heatmap image file (png, svg, or pdf) based on the colors specified in the command.
 
-```
-$ plotHeatmap -m MATRIXFILE -o HEATMAP --colorList lowColour,highColour
-```
+  ```
+  $ plotHeatmap -m MATRIXFILE -o HEATMAP --colorList lowColour, highColour
+  ```
+Example:
+  ```
+  $ plotHeatmap -m MATRIXFILE -o HEATMAP --colorList lowColour, highColour
+  ```
 
 
 ### Step 7: View Data with Integrative Genomics Viewer (IGV)
