@@ -52,7 +52,7 @@ Note: While it's not essential to verify the presence of CpG methylation, you ca
   ```
 
 ### Step 2: Align Reads with pbmm2
-Use pbmm2 to align your unprocessed .bam file to the reference genome. This generates a sorted and indexed .bam file for downstream analysis.
+Use pbmm2, a PacBio-optimized aligner, to map both your unprocessed .bam file and RNA sequencing data to the reference genome. This generates a sorted and indexed .bam file for downstream analysis.
 
   ```
   $ pbmm2 align [genome file] [bam file] [output filename] --sort --preset CCS
@@ -60,6 +60,7 @@ Use pbmm2 to align your unprocessed .bam file to the reference genome. This gene
 Example:
   ```
   $ pbmm2 align arabidopsis.fasta 1000.bam 1000_mapped.bam --sort --preset CCS
+  $ pbmm2 align arabidopsis.fasta RNA.fastq RNA_aligned.bam --sort --preset CCS
   ```
 Output: 1000_mapped.bam, 1000_mapped.bam.bai
 
