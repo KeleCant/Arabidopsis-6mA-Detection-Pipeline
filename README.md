@@ -23,12 +23,12 @@ These are the files we would provide you with
 Required tools:
 | Tool | Purpose |
 |-----------------|----------------------------|
-| (samtools)[https://github.com/samtools/samtools] | samtools is a suite of utilities for processing and analyzing .bam and .sam files. It is used to inspect aligned reads and verify the presence of methylation tags such as 6mA (A+a) or CpG (C+m) before running the full pipeline. |
+| [samtools](https://github.com/samtools/samtools) | samtools is a suite of utilities for processing and analyzing .bam and .sam files. It is used to inspect aligned reads and verify the presence of methylation tags such as 6mA (A+a) or CpG (C+m) before running the full pipeline. |
 | [pbmm2](https://github.com/PacificBiosciences/pbmm2) | pbmm2 is a PacBio-optimized alignment tool designed for mapping HiFi (CCS) reads to a reference genome. It is used to align unprocessed .bam files to the Arabidopsis thaliana reference, producing sorted and indexed BAM files. |
 | [Pb-cpg-tools](https://github.com/PacificBiosciences/pb-CpG-tools) | pb-CpG-tools is a PacBio utility for analyzing CpG methylation patterns from aligned HiFi sequencing data. It is used to extract and quantify CpG methylation sites from .bam files, enabling downstream comparison of epigenetic modifications. |
-| (deeptools)[https://github.com/deeptools/deepTools] |  |
-| (modbam2bed)[https://github.com/epi2me-labs/modbam2bed] |  |
-| (bedGraphToBigWig)[https://anaconda.org/bioconda/ucsc-bedgraphtobigwig] |  |
+| [deeptools](https://github.com/deeptools/deepTools) |  |
+| [modbam2bed](https://github.com/epi2me-labs/modbam2bed) |  |
+| [bedGraphToBigWig](https://anaconda.org/bioconda/ucsc-bedgraphtobigwig) |  |
 
 
 ### Step 1: Verify Presence of 6mA
