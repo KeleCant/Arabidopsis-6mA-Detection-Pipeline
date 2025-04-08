@@ -163,27 +163,26 @@ Example:
 
 
 ### Step 5: Generate a Matrix
-computeMatrix is a command included in deeptools, a command line tool available through bioconda. This is an intermediate step to compute a matrix that is used to generate a heatmap. The command requires the .bw (bigwig) file created by pb-cpg-tools and the new .bed file that was created by using convert.py. The additional arguments ensure that the genomic regions of interest are centered on the heatmap and the amount of basepairs on each side of the center point. The command will use the files and arguments to create a .MAT (matrix) file that will be used in the next step.
+computeMatrix is a command from deeptools, a tool available through Bioconda, used to compute a matrix for generating a heatmap. This step requires the .bw (BigWig) file created by pb-cpg-tools and the .bed file generated using convert.py. The command centers the genomic regions of interest and defines the number of base pairs on each side of the center. The output is a .MAT (matrix) file, which will be used in the next step.
 
   ```
-  $ computeMatrix reference-point --referencePoint center -bs binSize -a BP_after_BED -b BP_before_BED -p 4 -S  BIGWIGSofINTEREST --regionsFileName BEDFILEOFINTEREST --outFileName OUTFILE [filename.MAT]
+  $ computeMatrix reference-point --referencePoint center -bs [binSize] -a [BP_after_BED] -b [BP_before_BED] -p 4 -S [BIGWIGSofINTEREST] --regionsFileName [BEDFILEOFINTEREST] --outFileName [filename.MAT]
   ```
 Example 
   ```
-  $ computeMatrix reference-point --referencePoint center -bs binSize -a BP_after_BED -b BP_before_BED -p 4 -S  BIGWIGSofINTEREST --regionsFileName BEDFILEOFINTEREST --outFileName OUTFILE [filename.MAT]
+  $ computeMatrix reference-point --referencePoint center -bs 50 -a 500 -b 500 -p 4 -S 1000_mapped.combined.bw --regionsFileName 1000_mapped_updated.bed --outFileName matrix.MAT
   ```
 
 
 ### Step 6: Plot Heatmap
-plotHeatmap:
-plotHeatmap is a command included in deeptools, a command line tool available through bioconda. This command uses the .MAT file from the previous step and creates a heatmap image file (png, svg, or pdf) based on the colors specified in the command.
+plotHeatmap is a command from deeptools, available through Bioconda, that generates a heatmap image from the .MAT matrix file created in the previous step. The command allows you to customize the color scheme for the heatmap and output the result in different formats, such as PNG, SVG, or PDF.
 
   ```
-  $ plotHeatmap -m MATRIXFILE -o HEATMAP --colorList lowColour, highColour
+  $ plotHeatmap -m [MATRIXFILE] -o [HEATMAP] --colorList [lowColour, highColour]
   ```
 Example:
   ```
-  $ plotHeatmap -m MATRIXFILE -o HEATMAP --colorList lowColour, highColour
+  $ plotHeatmap -m matirix.MAT -o heatmap.png --colorList white,darkred
   ```
 
 
