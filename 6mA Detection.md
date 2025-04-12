@@ -43,3 +43,4 @@ RG:Z:bee2f01f/6--6
 mg:f:99.7849
 NM:i:22
 ```
+For further understanding on these tags (Read this)[https://samtools.github.io/hts-specs/SAMtags.pdf]
