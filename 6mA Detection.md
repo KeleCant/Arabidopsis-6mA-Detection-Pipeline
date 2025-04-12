@@ -45,3 +45,69 @@ mg:f:99.7849
 NM:i:22
 ```
 For further understanding on these tags [Read this](https://samtools.github.io/hts-specs/SAMtags.pdf)
+
+### [ML:B:C](https://samtools.github.io/hts-specs/SAMtags.pdf) - scaled-probabilities
+"The optional ML tag lists the probability of each modification listed in the MM tag being correct, in the
+order that they occur. The continuous probability range 0.0 to 1.0 is remapped in equal sized portions
+to the discrete integers 0 to 255 inclusively. Thus the probability range corresponding to integer value
+N is N/256 to (N + 1)/256.
+The SAM encoding therefore uses a byte array of type ‘C’ with the number of elements matching
+the summation of the number of modifications listed as being present in the MM tag accounting for
+multi-modifications each having their own probability.
+For example ‘MM:Z:C+m,5,12;C+h,5,12;’ may have an associated tag of ‘ML:B:C,204,89,26,130’.
+If the above is rewritten in the multiple-modification form, the probabilities are interleaved in the order
+presented, giving ‘MM:Z:C+mh,5,12; ML:B:C,204,26,89,130’. Note where several possible modifications are presented at the same site, the ML values represent the absolute probabilities of the modification call being correct and not the relative likelihood between the alternatives. These probabilities
+should not sum to above 1.0 (≈ 256 in integer encoding, allowing for some minor rounding errors),
+but may sum to a lower total with the remainder representing the probability that none of the listed
+modification types are present. In the example used above, the 6th C has 80% chance of being 5mC,
+10% chance of being 5hmC and 10% chance of being an unmodified C.
+ML values for ambiguity codes give the probability that the modification is one of the possible codes
+compatible with that ambiguity code. For example MM:Z:C+C,10; ML:B:C,229 indicates a C call with
+a probability of 90% of having some form of unspecified modification."
+
+### [MM:Z:([ACGTUN][-+]([a-z]+|[0-9]+)[.?]?(,[0-9]+)*;)*](https://samtools.github.io/hts-specs/SAMtags.pdf)
+"The first character is the unmodified “fundamental” base as reported by the sequencing instrument for
+the top strand. It must be one of ‘A’, ‘C’, ‘G’, ‘T’, ‘U’ (if RNA) or ‘N’ for anything else, including any
+IUPAC ambiguity codes in the reported SEQ field. Note ‘N’ may be used to match any base rather
+than specifically an ‘N’ call by the sequencing instrument. This may be used in situations where the
+base modification is not a derivation of a standard base type. This is followed by either plus or minus
+indicating the strand the modification was observed on (relative to the original sequenced strand of
+SEQ with plus meaning same orientation),3 and one or more base modification codes.
+Following the base modification codes is a recommended but optional ‘.’ or ‘?’ describing how skipped
+seq bases of the stated base type should be interpreted by downstream tools. When this flag is ‘?’
+there is no information about the modification status of the skipped bases provided. When this flag is
+not present, or it is ‘.’, these bases should be assumed to have low probability of modification.4
+This is then followed by a comma separated list of how many seq bases of the stated base type to
+skip, stored as a delta to the last and starting with 0 as the first (or next) base, starting from the uncomplemented 5’ end of the SEQ field. This number series is comparable to the numbers in an MD
+tag, albeit counting specific base types only and potentially reverse-complemented.
+For example ‘C+m,5,12,0;’ tells us there are three potential 5-Methylcytosine bases on the top strand
+of SEQ. The first 5 ‘C’ bases are unmodified and the 6th, 19th and 20th have modification status
+indicated by the corresponding probabilities in the ML tag. The 12 cytosines between the 6th and 19th
+cytosine are unmodified. Modification probabilities for the 17 skipped cytosines are not provided.
+When the ‘?’ flag is present the tag ‘C+m?,5,12,0;’ tells us the modification status of the first five
+cytosine bases is unknown, the sixth cytosine is called (as either modified or unmodified), followed by
+12 more unknown cytosines, and the 19th and 20th are called.
+Similarly ‘G-m,14;’ indicates the 15th ‘G’ there might be a 5-Methylcytosine on the opposite strand
+(still counting using the top strand base calls from the 5’ end). When the alignment record is reverse
+complemented (SAM flag 0x10) these two examples do not change since the tag always refers to the
+as-sequenced orientation. See the test/SAMtags/MM-orient.sam file for examples.
+This permits modifications to be listed on either strand with the rare potential for both strands to
+have a modification at the same site. If SAM FLAG 0x10 is set, indicating that SEQ has been
+reverse complemented from the sequence observed by the sequencing machine, note that these base
+modification field values will be in the opposite orientation to SEQ and other derived SAM fields.
+Note it is permitted for the coordinate list to be empty (for example ‘MM:Z:C+m;’), which may be used
+as an explicit indicator that this base modification is not present. It is not permitted for coordinates
+to be beyond the length of the sequence.
+When multiple modifications are listed, for example ‘C+mh,5,12,0;’, it indicates the modification may
+be any of the stated bases. The associated confidence values in the ML tag may be used to determine the
+relative likelihoods between the options. The example above is equivalent to ‘C+m,5,12,0;C+h,5,12,0;’,
+although this will have a different ordering of confidence values in ML. Note ChEBI codes cannot be
+used in the multi-modification form (such as the ‘C+mh’ example above).
+If the modification is not one of the standard common types (listed below) it can be specified as a
+numeric ChEBI code. For example ‘C+76792,57;’ is the same as ‘C+h,57;’.
+An unmodified base of ‘N’ means count any base in SEQ, not only those of ‘N’. Thus ‘N+n,100;’ means
+the 101st base is Xanthosine (n), irrespective of the sequence composition.
+The standard code types and their associated ChEBI values are listed below, taken from Viner et al.5
+Additionally ambiguity codes ‘A’, ‘C’, ‘G’, ‘T’ and ‘U’ exist to represent unspecified modifications bases
+of their respective canonical base types, plus code ‘N’ to represent an unspecified modification of any
+base type."
