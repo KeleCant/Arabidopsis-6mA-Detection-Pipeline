@@ -1,0 +1,8 @@
+samtools view 1007_mapped.bam | grep 'MM:Z:A+a' > 6mA_reads.sam
+
+with open("6mA_reads.sam", "r") as samfile, open("1007_6mA_sites.txt", "w") as out:
+    for line in samfile:
+        fields = line.strip().split("\t")
+        chrom = fields[2]  # Chromosome
+        pos = int(fields[3])  # Alignment position
+        out.write(f"{chrom}\t{pos}\n")
