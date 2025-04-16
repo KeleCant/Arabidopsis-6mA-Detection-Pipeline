@@ -1,7 +1,16 @@
-# First version
-
 import argparse
 import os
+
+# Chromosome size limits
+CHROM_SIZES = {
+    "chr1": 30427671,
+    "chr2": 19698289,
+    "chr3": 23459830,
+    "chr4": 18585056,
+    "chr5": 26975502,
+    "chrm": 367808,
+    "chrc": 154478
+}
 
 def decode_mm_deltas(deltas):
     """Convert MM delta string with dots into absolute positions."""
@@ -18,11 +27,14 @@ def decode_mm_deltas(deltas):
         positions.append(last_pos)
     return positions
 
-def extract_6ma_to_bed(input_file, output_bed):
-    """Extracts 6mA (A+a) modifications and writes them to a BED file."""
-    temp_bedfile = output_bed + ".temp"
+def extract_6ma_to_bed(input_file, output_prefix):
+    """Extracts 6mA (A+a) modifications and writes them to strand-specific BED files using proper genomic positions."""
+    temp_pos_bed = output_prefix + "_pos.temp.bed"
+    temp_neg_bed = output_prefix + "_neg.temp.bed"
+
     with open(input_file, 'r', encoding='utf-8') as infile, \
-         open(temp_bedfile, 'w', encoding='utf-8') as bedfile:
+         open(temp_pos_bed, 'w', encoding='utf-8') as pos_bed, \
+         open(temp_neg_bed, 'w', encoding='utf-8') as neg_bed:
 
         for line in infile:
             if line.startswith('@'):
@@ -34,10 +46,12 @@ def extract_6ma_to_bed(input_file, output_bed):
 
             chrom = parts[2]
             try:
+                flag = int(parts[1])
                 chrom_start = int(parts[3]) - 1  # 0-based
             except ValueError:
                 continue
 
+            strand = '-' if flag & 16 else '+'
             mm_field = next((f for f in parts if f.startswith('MM:Z:')), None)
             ml_field = next((f for f in parts if f.startswith('ML:B:C,')), None)
 
@@ -57,17 +71,33 @@ def extract_6ma_to_bed(input_file, output_bed):
                         for rel_pos in positions:
                             if ml_index >= len(ml_values):
                                 break
+
                             score = (ml_values[ml_index] + 1) / 256
-                            start = chrom_start + rel_pos
+
+                            # Absolute position from chrom_start
+                            start = chrom_start + rel_pos if strand == '+' else chrom_start - rel_pos
                             end = start + 1
-                            bedfile.write(f"{chrom}\t{start}\t{end}\t{score:.4f}\n")
+
+                            if chrom in CHROM_SIZES and 0 <= start < CHROM_SIZES[chrom]:
+                                bed_line = f"{chrom}\t{start}\t{end}\t{score:.4f}\n"
+                                if strand == '+':
+                                    pos_bed.write(bed_line)
+                                else:
+                                    neg_bed.write(bed_line)
+
                             ml_index += 1
                     else:
                         skip_count = len(mm[3:].split(','))
                         ml_index += skip_count
 
-    sort_bed_file(temp_bedfile, output_bed)
-    merge_sorted_bed_records(output_bed)
+    pos_final = output_prefix + "_pos.bed"
+    neg_final = output_prefix + "_neg.bed"
+
+    sort_bed_file(temp_pos_bed, pos_final)
+    sort_bed_file(temp_neg_bed, neg_final)
+
+    merge_sorted_bed_records(pos_final)
+    merge_sorted_bed_records(neg_final)
 
 def sort_bed_file(input_bed, output_bed):
     """Sorts a BED file by chromosome and start position."""
@@ -101,7 +131,6 @@ def merge_sorted_bed_records(bed_file):
                 merged.append(f"{prev_chrom}\t{prev_start}\t{prev_end}\t{total_score:.4f}\n")
             prev_chrom, prev_start, prev_end, total_score = chrom, start, end, score
 
-    # Add the last record
     if prev_chrom is not None:
         merged.append(f"{prev_chrom}\t{prev_start}\t{prev_end}\t{total_score:.4f}\n")
 
@@ -109,12 +138,12 @@ def merge_sorted_bed_records(bed_file):
         outfile.writelines(merged)
 
 def main():
-    parser = argparse.ArgumentParser(description="Extract 6mA (A+a) modifications to BED.")
+    parser = argparse.ArgumentParser(description="Extract 6mA (A+a) modifications to strand-specific BED files.")
     parser.add_argument("input_file", help="Input SAM file")
     args = parser.parse_args()
-    output_bed = args.input_file.replace(".sam", "_6mA.bed")
-    extract_6ma_to_bed(args.input_file, output_bed)
-    print(f"6mA extraction complete! BED file saved to: {output_bed}")
+    output_prefix = args.input_file.replace(".sam", "_6mA")
+    extract_6ma_to_bed(args.input_file, output_prefix)
+    print(f"6mA extraction complete!\n → {output_prefix}_pos.bed\n → {output_prefix}_neg.bed")
 
 if __name__ == "__main__":
     main()
