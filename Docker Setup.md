@@ -59,7 +59,9 @@ Using SCP:
 $ scp arabidopsis-6ma-search.tar kelebk@ssh.rc.byu.edu:/home/kelebk/groups/fslg_dnasc/nobackup/archive/Capstone_project/
 ```
 
-Alternatively, set up Globus and transfer the file through Globus.
+Alternatively, set up Globus and transfer the file through [Globus](https://rc.byu.edu/wiki/index.php?page=Globus).
+
+**My Docker file is too big to use scp, use [Globus](https://rc.byu.edu/wiki/index.php?page=Globus)**
 
 ### Step 4: Load the Apptainer Module
 ```
