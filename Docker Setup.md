@@ -2,10 +2,6 @@
 
 This guide provides step-by-step instructions on how to set up and run the Arabidopsis 6mA Search tool using Docker.
 
-## Prerequisites
-
-- **Docker**: Ensure Docker is installed on your system. If not, download and install it from the official [Docker website](https://www.docker.com/products/docker-desktop/).
-
 ## Setup Instructions
 
 ### Step 1: Install Docker
