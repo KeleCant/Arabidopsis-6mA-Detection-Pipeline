@@ -46,8 +46,44 @@ NM:i:22
 ```
 For further understanding on these tags [Read this](https://samtools.github.io/hts-specs/SAMtags.pdf)
 
-### [ML:B:C](https://samtools.github.io/hts-specs/SAMtags.pdf) - scaled-probabilities
+# SAM Format Field Breakdown
+Each alignment line in a SAM file consists of 11 mandatory fields. Below is a breakdown of each field:
 
+### Line 1: QNAME
+Query template NAME: Identifier for the read or read pair. Reads with the same QNAME are considered part of the same template.
 
-### MM:Z:([ACGTUN][-+]([a-z]+|[0-9]+)[.?]?(,[0-9]+)*;)*
+### Line 2: FLAG
+Bitwise FLAG: Integer representing bitwise flags that describe the read's properties (e.g., paired, mapped, reverse strand). For detailed flag meanings, refer to the [SAM format specification](https://samtools.github.io/hts-specs/SAMv1.pdf).
+
+### Line 3: RNAME
+Reference sequence NAME: Name of the reference sequence (e.g., chromosome) to which the read is aligned.
+
+### Line 4: POS
+1-based leftmost mapping POSition: Position where the alignment starts on the reference sequence.
+
+### Line 5: MAPQ
+MAPping Quality: Phred-scaled quality score indicating the confidence of the alignment.
+
+### Line 6: CIGAR
+CIGAR string: Compact representation of the alignment, showing matches, insertions, deletions, etc.
+
+### Line 7: RNEXT
+Reference name of the mate/next read: Reference sequence name of the mate read. '=' indicates the same as RNAME.
+
+### Line 8: PNEXT
+Position of the mate/next read: 1-based position of the mate read's alignment.
+
+### Line 9: TLEN
+Template LENgth: Observed length of the template (insert size). Can be negative depending on the orientation.
+
+### Line 10: SEQ
+Segment SEQuence: The nucleotide sequence of the read.
+
+### Line 11: QUAL
+ASCII of Phred-scaled base QUALity+33: Quality scores for each base in SEQ, encoded as ASCII characters.
+
+### Line 12:
+
+Please refer to the official [SAM format specification](https://samtools.github.io/hts-specs/SAMv1.pdf) and the [SAM optional fields specification](https://samtools.github.io/hts-specs/SAMtags.pdf) for a comprehensive understanding of each field and optional tags.
+
 
