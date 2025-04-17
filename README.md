@@ -1,5 +1,5 @@
 # Arabidopsis 6mA/CpG Detection and Comparison Pipeline
-This is a project that is part of a Bioinformatics capstone project done in tandem with the BYU genetics lab. Our goal is to look, observe, and compare 6mA in Arabidopsis and compare it to 5mC presence. Due to privacy and permission restrictions set by our sponsor and steward, we are not authorized to distribute the raw data files externally.
+This project is part of a Bioinformatics capstone conducted in collaboration with the BYU Genetics Lab. Our objective is to investigate and compare the presence of N6-methyladenine (6mA) in Arabidopsis thaliana alongside 5-methylcytosine (5mC) methylation patterns. Due to privacy considerations and restrictions imposed by our project sponsor and data steward, we are not authorized to distribute the raw data files externally.
 
 # Reproducibility Guide
 Expected Input Files:
@@ -21,8 +21,19 @@ Required tools:
 | [bedGraphToBigWig](https://anaconda.org/bioconda/ucsc-bedgraphtobigwig) | bedGraphToBigWig is a utility for converting .bedGraph files to the .bigWig format. It is used to visualize genomic data in IGV, allowing for an efficient display of methylation. |
 | [deeptools](https://github.com/deeptools/deepTools) | deepTools is a collection of tools for analyzing and visualizing genomic data. It is used to generate a heatmap to analyze methylation data. |
 
-There are multiple ways to get these programs to work; the easiest way is through Docker, a full guide on how to install these programs tools through docker is located here
+### Software Installation Instructions:
+There are several ways to set up the required tools for this pipeline. The recommended and most straightforward method is via Docker. A comprehensive setup guide is available [here](https://github.com/KeleCant/Arabidopsis-6mA-Detection-Pipeline/blob/main/Docker%20Setup.md).
 
+Alternatively, users may choose to configure a Conda environment or utilize Nextflow. These approaches require manual installation of each tool.
+
+For users operating on the BYU supercomputer, most tools can be accessed using the module load command, except for pb-cpg-tools, which is not currently available as a module. To use pb-cpg-tools, you will need to reference its direct path and invoke it as a function. For example:
+```
+2_software/Pb-6mA-tool/pb-CpG-tools-v3.0.0-x86_64-unknown-linux-gnu/bin/aligned_bam_to_cpg_scores
+```
+Example usage of module loading:
+```
+module load <tool_name>
+```
 
 ### Step 1: Verify Presence of 6mA
 Before executing the pipeline, it's important to confirm that N6-methyladenine (6mA) modifications are present in your .bam file. This step ensures that running the full analysis is justified.
