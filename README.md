@@ -1,3 +1,5 @@
+**Fix Me** Step 3A Needs to be rewritten, Step 7 needs to be rewritten, step 6 needs more explanation
+
 # Arabidopsis 6mA/CpG Detection and Comparison Pipeline
 This project is part of a Bioinformatics capstone conducted in collaboration with the BYU Genetics Lab. Our objective is to investigate and compare the presence of N6-methyladenine (6mA) in Arabidopsis thaliana alongside 5-methylcytosine (5mC) methylation patterns. Due to privacy considerations and restrictions imposed by our project sponsor and data steward, we are not authorized to distribute the raw data files externally.
 
@@ -39,11 +41,11 @@ module load <tool_name>
 Before executing the pipeline, it's important to confirm that N6-methyladenine (6mA) modifications are present in your .bam file. This step ensures that running the full analysis is justified.
 
   ```
-  $ Samtools view [your_file.bam filename] | grep -c “A+a”
+  $ samtools view [your_file.bam filename] | grep -c "A+a"
   ```
 Example:
   ```
-  $ samtools view 1000.bam | grep -c “A+a”
+  $ samtools view 1000.bam | grep -c "A+a"
   ```
 
 This command will return the number of reads in the .bam file that include the 6mA tag. 
@@ -64,13 +66,12 @@ Use pbmm2, a PacBio-optimized aligner, to map both your unprocessed .bam file an
 Example:
   ```
   $ pbmm2 align arabidopsis.fasta 1000.bam 1000_mapped.bam --sort --preset CCS
-  $ pbmm2 align arabidopsis.fasta RNA.fastq RNA_aligned.bam --sort --preset CCS
   ```
 Output: 1000_mapped.bam, 1000_mapped.bam.bai
 
 (The index file [.bam.bai] is detected and inserted automatically)
 
-## Steps 3 and 4 have two scripts that run parallel to each other in nextflow. A is for CpG and B is for 6mA. Both generate the same outputs.
+## Steps 3 and 4 have two scripts that run in parallel to each other in Nextflow. A is for CpG, and B is for 6mA. Both generate the same type of outputs.
 
 ### Step 3A: Generate CpG Methylation Scores
 pb-CpG-tools is a tool developed by PacBio to compute CpG (5mC) methylation probabilities from aligned HiFi .bam files. It requires that both the .bam and its corresponding .bai index file are present in the same directory.
@@ -78,11 +79,11 @@ pb-CpG-tools is a tool developed by PacBio to compute CpG (5mC) methylation prob
 Using the aligned_bam_to_cpg_scores command, the tool generates several output files. The key files used for downstream analysis and visualization are the .bed and .bw (BigWig) files.
 
   ```
-  $ aligned_bam_to_cpg_scores --bam [aligned.bam]  --output-prefix [output_prefix]
+  $ aligned_bam_to_cpg_scores --bam [aligned.bam] --output-prefix [output Name]
   ```
 Example:
   ```
-  $ aligned_bam_to_cpg_scores --bam 1000_mapped.bam --output-prefix _CSS_Data
+  $ aligned_bam_to_cpg_scores --bam 1000_mapped.bam --output-prefix 1000_mapped
   ```
 Output: 
   ```
@@ -120,27 +121,8 @@ Output: 1000_mapped_updated.bed
 
 
 ### Step 3B: Create a 6mA BED File
-To create a 6mA BED file, we first use modbam2bed to extract methylation data from the aligned .bam file. As mentioned in the chart at the top of the page, this is where the problem occurs in our pipeline relating to 6mA. This step will be changed in the future. modbam2bed fails to produce accurate scores within the bed file, so we are currently looking into a solution. Most likely we will use Modkit, if that doesn't work we will write a script by hand.
-**Create a .bed file**
-  ```
-  $ modbam2bed -m 6mA [reference_genome.fasta] [input.bam] > [output.bed]
-  ```
-Example:
-  ```
-  $ modbam2bed -m 6mA arabidopsis.fasta 1000_mapped.bam > 1000_mapped_6mA.bed
-  ```
 
-
-**Convert the BED to BEDGraph**
-Use awk to filter and format the data into a .bedGraph file. This is required to create a BigWig file.
-  ```
-  $ awk '{ print $1"\t"$2"\t"$3"\t"$5 }' [input.bed] > [output.bedgraph]
-  ```
-Example
-  ```
-  $ awk '{ print $1"\t"$2"\t"$3"\t"$5 }' 1000_mapped_6mA.bed > 1000_mapped_6mA.bedgraph
-  ```
-
+**Fix Me**
 
 ### Step 4B: Convert 6mA BED File to .bw File
 **Extract Chromosome Data**
@@ -153,15 +135,14 @@ Example:
   $ cut -f1,2 arabidopsis.fasta.fai > chrom.sizes
   ```
 
-
 **Create BigWig File**
-Next, use bedGraphToBigWig to convert the .bedGraph file into a .bw file for efficient visualization.
+Next, use bedGraphToBigWig to convert the .bed file into a .bw file for IGV visualization.
   ```
   $ bedGraphToBigWig [input.bedGraph] [chrom.sizes] [output.bw]
   ```
 Example:
   ```
-  $ bedGraphToBigWig 1000_mapped_6mA.bedGraph chrom.sizes 1000_mapped_6mA.bw
+  $ bedGraphToBigWig 1000_mapped_6mA.bed chrom.sizes 1000_mapped_6mA.bw
   ```
 
 
@@ -190,6 +171,7 @@ Example:
 
 
 ### Step 7: View Data with [Integrative Genomics Viewer (IGV)](https://github.com/KeleCant/Arabidopsis-6mA-Detection-Pipeline/blob/main/Figure%201.pdf)
+1. Download [IGV](https://igv.org/download/html/oldtempfixForDownload.html)
 1. Open Integrative Genomics Viewer (IGV) on your local computer. Select A. thaliana (TAIR 10) as the reference genome. This will open the RefSeq Genes as a track.
 2. Locate the output aligned .bam and .bam.bai DNA files from pbmm2, the aligned RNA .bam and .bam.bai files, and the bigwig (.bw) file from the cpg-tool output. Ensure all of them are in the same directory.
 3. In IGV open each .bam file to create 4 more tracks. This will produce a “Coverage” track and a reads track for both the DNA and RNA.
