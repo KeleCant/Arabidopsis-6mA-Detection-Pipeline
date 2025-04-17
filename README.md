@@ -1,17 +1,8 @@
-# Arabidopsis 6mA/CpG Detection and Comparison Pipeline – Reproducibility Guide
-
-### A note to the grader
-This is our reproducibility pipeline for our capstone project to detect and compare 6mA and CpG methylation in Arabidopsis thaliana. Due to privacy and permission restrictions set by our sponsor and steward, we are not authorized to distribute the raw data files externally, including for grading purposes. This policy has been approved by Dr. Payne.
-
-To support transparency and demonstrate our work, we have included:
-- A detailed workflow guide
-- An overview of expected inputs and processing steps
-  
-We are still working on making 6mA data presentable. In its current state, our pipeline gives an output for 6mA concentration but it is not accurate. Please be patient as we continue to work on this problem. Dr. Payne is aware of this hiccup.
+# Arabidopsis 6mA/CpG Detection and Comparison Pipeline
+This is a project that is part of a Bioinformatics capstone project done in tandem with the BYU genetics lab. Our goal is to look, observe, and compare 6mA in Arabidopsis and compare it to 5mC presence. Due to privacy and permission restrictions set by our sponsor and steward, we are not authorized to distribute the raw data files externally.
 
 # Reproducibility Guide
-
-Expected Inputs Files:
+Expected Input Files:
 These are the files we would provide you with
   ```
   - 1000.bam (~12.3 GB)                 # Binary alignment file
@@ -26,10 +17,11 @@ Required tools:
 |-----------------|----------------------------|
 | [samtools](https://github.com/samtools/samtools) | samtools is a set of utilities for processing and analyzing .bam and .sam files. It is used to inspect aligned reads and verify the presence of methylation tags such as 6mA (A+a) or CpG (C+m) before running the full pipeline. |
 | [pbmm2](https://github.com/PacificBiosciences/pbmm2) | pbmm2 is a PacBio-optimized alignment tool designed for mapping HiFi (CCS) reads to a reference genome. It is used to align unprocessed .bam files to the Arabidopsis thaliana reference, producing sorted and indexed BAM files. |
-| [Pb-cpg-tools](https://github.com/PacificBiosciences/pb-CpG-tools) | pb-CpG-tools is a PacBio utility for analyzing CpG methylation patterns from aligned HiFi sequencing data. It extracts and quantifies CpG methylation sites from .bam files, enabling downstream comparison of epigenetic modifications. |
-| [deeptools](https://github.com/deeptools/deepTools) | deepTools is a collection of tools for analyzing and visualizing genomic data. It is used to generate a heatmap to analyze methylation data. |
-| [modbam2bed](https://github.com/epi2me-labs/modbam2bed) | modbam2bed converts modified BAM files to the .bed format for easier analysis of methylation marks. This program fails to generate 6mA scores properly causing IGV graphs to look corrupted. This tool will likely be replaced with [Modkit](https://github.com/nanoporetech/modkit/?tab=readme-ov-file) or a handwritten Python script. |
+| [pb-cpg-tools](https://github.com/PacificBiosciences/pb-CpG-tools) | pb-CpG-tools is a PacBio utility for analyzing CpG methylation patterns from aligned HiFi sequencing data. It extracts and quantifies CpG methylation sites from .bam files, enabling downstream comparison of epigenetic modifications. |
 | [bedGraphToBigWig](https://anaconda.org/bioconda/ucsc-bedgraphtobigwig) | bedGraphToBigWig is a utility for converting .bedGraph files to the .bigWig format. It is used to visualize genomic data in IGV, allowing for an efficient display of methylation. |
+| [deeptools](https://github.com/deeptools/deepTools) | deepTools is a collection of tools for analyzing and visualizing genomic data. It is used to generate a heatmap to analyze methylation data. |
+
+There are multiple ways to get these programs to work; the easiest way is through Docker, a full guide on how to install these programs tools through docker is located here
 
 
 ### Step 1: Verify Presence of 6mA
