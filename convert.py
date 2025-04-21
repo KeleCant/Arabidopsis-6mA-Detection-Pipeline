@@ -39,7 +39,7 @@ def write_bed(file_path, entries):
 # Example usage
 if __name__ == "__main__":
     bed_entries = []
-    if len(sys.argv) < 2 or len(sys.argv) > 3:
+    if len(sys.argv) != 3:
         print("Error: Provide name of input and output file in the following order")
         print("python convert.py \'path to input file\' \'path to output file\'")
     else:
