@@ -1,5 +1,3 @@
-**Fix Me** Step 3A Needs to be rewritten, Step 7 needs to be rewritten, step 6 needs more explanation
-
 # Arabidopsis 6mA/CpG Detection and Comparison Pipeline
 This project is part of a Bioinformatics capstone conducted in collaboration with the BYU Genetics Lab. Our objective is to investigate and compare the presence of N6-methyladenine (6mA) in Arabidopsis thaliana alongside 5-methylcytosine (5mC) methylation patterns. Due to privacy considerations and restrictions imposed by our project sponsor and data steward, we are not authorized to distribute the raw data files externally.
 
@@ -24,11 +22,11 @@ Required tools:
 | [deeptools](https://github.com/deeptools/deepTools) | deepTools is a collection of tools for analyzing and visualizing genomic data. It is used to generate a heatmap to analyze methylation data. |
 
 ### Software Installation Instructions:
-There are several ways to set up the required tools for this pipeline. The recommended and most straightforward method is via Docker. A comprehensive setup guide is available [here](https://github.com/KeleCant/Arabidopsis-6mA-Detection-Pipeline/blob/main/Docker%20Setup.md).
+There are several ways to set up the required tools for this pipeline. The recommended and most straightforward method is via Docker; Docker will install all required programs so you can run through each command of the pipeline. A comprehensive setup guide is available [here](https://github.com/KeleCant/Arabidopsis-6mA-Detection-Pipeline/blob/main/Docker%20Setup.md).
 
-Alternatively, users may choose to configure a Conda environment or utilize Nextflow. These approaches require manual installation of each tool.
+Alternatively, users may choose to configure a Conda environment or utilize Nextflow. These approaches require manual installation of each tool. Both tools are available via Docker.
 
-For users operating on the BYU supercomputer, most tools can be accessed using the module load command, except for pb-cpg-tools, which is not currently available as a module. To use pb-cpg-tools, you will need to reference its direct path and invoke it as a function. For example:
+For users operating on the BYU supercomputer, most tools can be accessed using the module load command, except for pb-cpg-tools, which is not currently available as a module. To use pb-cpg-tools, you will need to reference its direct path and invoke it as a function. For example, if you are on the BYU Super Computer for the Genetics lab in the Capstone directory use:
 ```
 2_software/Pb-6mA-tool/pb-CpG-tools-v3.0.0-x86_64-unknown-linux-gnu/bin/aligned_bam_to_cpg_scores
 ```
@@ -121,8 +119,15 @@ Output: 1000_mapped_updated.bed
 
 
 ### Step 3B: Create a 6mA BED File
+Convert .bam file into a .sam file format for python script
+```
+$ samtools view -h 1000_mapped.bam | head > 1000_mapped.sam
+```
 
-**Fix Me**
+Next run the Python script
+```
+python CpG_to_6mA_Script.py 1007_mapped.sam
+```
 
 ### Step 4B: Convert 6mA BED File to .bw File
 **Extract Chromosome Data**
