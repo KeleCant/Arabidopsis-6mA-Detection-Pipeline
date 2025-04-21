@@ -250,8 +250,8 @@ The final step involves visualizing your aligned DNA/RNA reads and methylation s
       - BigWig methylation signal
       - RefSeq Genes (reference annotation)
 
-  Final Track Layout (for visualization)
-    - RefSeq Genes – gene model annotation
-    - DNA Coverage – overall depth of DNA reads
-    - RNA Coverage – overall depth of RNA reads
-    - Methylation Signal (BigWig) – 6mA signal intensity
+Final Track Layout (for visualization)
+  - RefSeq Genes – gene model annotation
+  - DNA Coverage – overall depth of DNA reads
+  - RNA Coverage – overall depth of RNA reads
+  - Methylation Signal (BigWig) – 6mA signal intensity
