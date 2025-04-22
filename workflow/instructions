@@ -1,14 +1,14 @@
 Create a nextflow conda environment in home directory
- Run: conda activate nextflow-env
+Run: conda activate nextflow-env
  
- #Update nextflow.contig file as needed
- # Update nextflow.contig file as needed
+ Update nextflow.contig file as needed
+ Update nextflow.contig file as needed
  
  Required:
  Update BAMFILEOFINTEREST with the path of the input bam file of your choice
- @@ -18,3 +18,5 @@ Update lowColour and highColour to adhere to desired color scheme
- Run: nextflow run pipeline.nf
+ Update lowColour and highColour to adhere to desired color scheme
+ Run: nextflow run pipeline.nf 
  If conda is having errors, run like this:
  nextflow run pipeline.nf -with-conda
  
- # This will run all the commands in sequence and produce the necessary output files to use manually in IGV.
+ This will run all the commands in sequence and produce the necessary output files to use manually in IGV.
